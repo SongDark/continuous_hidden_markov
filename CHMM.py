@@ -25,6 +25,7 @@ class CHMM(object):
         self.set_thresholds()
         
     def set_thresholds(self, thresholds=None):
+        '''set thresholds to judge convergence of training'''
         default_thresholds = {
             'A': 1e-7,
             'miu': 1e-5,
@@ -107,6 +108,7 @@ class CHMM(object):
             self.difference[key] = 0.0
 
     def estimate(self):
+        '''E step'''
         self.compute_B()
         self.update_alpha()
         self.update_beta()
@@ -115,6 +117,7 @@ class CHMM(object):
         self.update_ksai()
     
     def maximize(self):
+        '''M step'''
         self.update_A()
         self.update_P()
         self.update_C()
@@ -197,6 +200,7 @@ class CHMM(object):
             self.ksai[idx] = ksai.copy()
 
     def update_A(self):
+        # update A
         up = np.zeros_like(self.A)
         down = np.zeros_like(self.A)
         for idx in range(len(self.dataset)):
@@ -208,6 +212,7 @@ class CHMM(object):
         self.A = A.copy()
 
     def update_P(self):
+        # update P
         P = np.zeros_like(self.P)
         for idx in range(len(self.dataset)):
             P += self.Gamma[idx][:, 0]
@@ -216,6 +221,7 @@ class CHMM(object):
         self.P = P.copy()
     
     def update_C(self):
+        # update C
         up = np.zeros_like(self.C) # [N,M]
         down = np.zeros_like(self.C)
         for idx in range(len(self.dataset)):
@@ -227,6 +233,7 @@ class CHMM(object):
         self.C = C.copy()
     
     def update_miu(self):
+        # update miu
         up = np.zeros_like(self.miu) # [N,M,d]
         down = np.zeros_like(self.miu)
         for idx in range(len(self.dataset)):
@@ -239,6 +246,7 @@ class CHMM(object):
         self.miu = miu.copy()
     
     def update_cov(self):
+        # update cov
         up = np.zeros_like(self.cov) # [N,M,d,d]
         down = np.zeros_like(self.cov) # [N,M,d,d]
         for idx in range(len(self.dataset)):
@@ -259,6 +267,7 @@ class CHMM(object):
         self.cov = cov.copy()
     
     def judge_convergence(self):
+        # judge whether the training meets convergence
         if self.difference['A'] < self.thresholds['A'] \
             or self.difference['cov'] < self.thresholds['cov'] \
             or self.difference['miu'] < self.thresholds['miu']:
@@ -267,11 +276,13 @@ class CHMM(object):
             return False
     
     def load_model(self, model_path):
+        # load P,A,C,mu,cov from model_path
         model = np.load(model_path)
         for key in model.keys():
             self.__dict__[key] = model[key]
         
     def save_model(self, model_path):
+        # save P,A,C,mu,cov into model_path
         print 'saved to {}'.format(model_path)
         to_save={
             'P':self.P, # [N,]
@@ -283,6 +294,7 @@ class CHMM(object):
         np.savez(model_path, **to_save)
     
     def Viterbi_decode(self):
+        # Viterbi decoding to compute probabilities
         # don't forget to compute B first
         self.compute_B()
         for idx in range(len(self.dataset)):
