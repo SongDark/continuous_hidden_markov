@@ -24,7 +24,7 @@ It's a dataset of differential 2D-trajectories, which are temporal sequences, wi
 2. Run [dataprocess](https://github.com/SongDark/timeseries_infogan/blob/master/dataprocess.py) to generate `.npz` file.
 
 ## Confusion Matrix
-
+The x-axis is `label`, y-axis is `prediction`.
 <centering>
 <img src="save/CharacterTrajectories/confuse_matrix.png" width=500px>
 
