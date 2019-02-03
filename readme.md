@@ -25,6 +25,7 @@ It's a dataset of differential 2D-trajectories, which are temporal sequences, wi
 
 ## Confusion Matrix
 The x-axis is `label`, y-axis is `prediction`.
+
 <centering>
 <img src="save/CharacterTrajectories/confuse_matrix.png" width=500px>
 
